@@ -7,6 +7,7 @@ import config from "./config";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
+import { userRoutes } from "./modules/user/user.route";
 
 
 const app: Application = express();
@@ -23,6 +24,10 @@ app.use(cors({
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
+
+
+app.use("/api/auth", userRoutes);
+
 
 app.use(globalErrorHandler);
 
