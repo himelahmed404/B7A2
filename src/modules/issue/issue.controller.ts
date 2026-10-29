@@ -116,9 +116,41 @@ const updateIssue = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const deleteIssue = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = req.user;
+    const issueId = req.params.id;
+
+    if (user?.role !== "maintainer") {
+      return sendResponse(res, {
+        status: 404,
+        success: false,
+        message: "Only maintainer can do this",
+      });
+    }
+    const existingIssue = await IssueService.GetIssueByIdFromDB(issueId as string);
+
+    if (!existingIssue) {
+      res.status(404).json({ success: false, message: "Issue not found" });
+      return;
+    }
+
+    const result = await IssueService.DeleteIssueFromDB(issueId as string);
+    sendResponse(res, {
+      status: 200,
+      success: true,
+      message: "Issue Deleted successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const IssueController = {
   getIssueById,
   createIssue,
   getAllIssues,
   updateIssue,
+  deleteIssue,
 };
