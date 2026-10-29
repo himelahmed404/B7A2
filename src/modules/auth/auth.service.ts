@@ -13,7 +13,6 @@ const loginUserIntoDB = async (payload: {
     email,
   ]);
 
-  console.log("checkMail", checkMail);
   if (checkMail.rows.length === 0) {
     throw new Error("Invalid email or password");
   }
