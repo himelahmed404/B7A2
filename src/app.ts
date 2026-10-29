@@ -9,6 +9,7 @@ import cors from "cors";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
 import { userRoutes } from "./modules/user/user.route";
 import { authRoutes } from "./modules/auth/auth.route";
+import { IssueRoutes } from "./modules/issue/issue.route";
 
 
 const app: Application = express();
@@ -29,6 +30,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/auth", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/issues", IssueRoutes);
 
 
 app.use(globalErrorHandler);

@@ -8,7 +8,7 @@ export interface AuthRequest extends Request {
   user?: JwtPayload | string;
 }
 
-const auth = (...requiredRoles: string[]) => {
+export const auth = (...requiredRoles: string[]) => {
   return async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const token = req.headers.authorization;
@@ -27,7 +27,7 @@ const auth = (...requiredRoles: string[]) => {
         process.env.JWT_SECRET as string,
       ) as JwtPayload;
 
-      const userData = await pool.query(`SELECT * FROM users WHERE id = $1`, [
+      const userData = await pool.query(`SELECT * FROM users WHERE email = $1`, [
         decoded.email,
       ]);
 
