@@ -2,7 +2,7 @@
 
 Internal tech issue and feature tracker API for software teams.
 
-**Live URL:** _(add after deploy, e.g. `https://devpulse-api.onrender.com`)_
+**Live URL:** _[link](https://devpulse-api-8qom.onrender.com)_
 
 ## Features
 
