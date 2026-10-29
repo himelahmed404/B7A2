@@ -1,6 +1,7 @@
 import type { Request, NextFunction, Response } from "express";
 import { IssueService } from "./issue.service";
 import sendResponse from "../../utility/sendResponse";
+import type { Query } from "../../types";
 
 const createIssue = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -21,6 +22,26 @@ const createIssue = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getAllIssues = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await IssueService.GetAllIssuesFromDB(req.query as Query);
+
+    sendResponse(res, {
+      status: 200,
+      success: true,
+      message: "All issues fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const IssueController = {
   createIssue,
+  getAllIssues,
 };
