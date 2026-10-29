@@ -30,19 +30,19 @@ const GetAllIssuesFromDB = async (queryParams: Query) => {
 
   const result = await pool.query(issues, [type || null, status || null]);
 
-    const userIds = result.rows.map((issue) => issue.reporter_id);
-    const usersQuery = await pool.query(
-      `
+  const userIds = result.rows.map((issue) => issue.reporter_id);
+  const usersQuery = await pool.query(
+    `
         SELECT id, username AS name, role FROM users WHERE id = ANY($1);
       `,
-      [userIds],
-    );
+    [userIds],
+  );
 
-    const usersMap = new Map(usersQuery.rows.map((user) => [user.id, user]));
+  const usersMap = new Map(usersQuery.rows.map((user) => [user.id, user]));
 
-    result.rows.forEach((issue) => {
-      issue.reporter = usersMap.get(issue.reporter_id) || null;
-    });
+  result.rows.forEach((issue) => {
+    issue.reporter = usersMap.get(issue.reporter_id) || null;
+  });
   return result.rows;
 };
 
@@ -70,8 +70,28 @@ const GetIssueByIdFromDB = async (issueId: string) => {
     reporter,
   };
 };
+
+const UpdateIssueInDB = async (issueId: string, payload: Partial<Issue>) => {
+  const { title, description, type } = payload;
+  const query = await pool.query(
+    `
+        UPDATE issues
+        SET title = COALESCE($1, title),
+            description = COALESCE($2, description),
+            type = COALESCE($3, type),
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = $4
+        RETURNING *;
+        `,
+    [title || null, description || null, type || null, issueId],
+  );
+
+  return query.rows[0];
+};
+
 export const IssueService = {
   GetAllIssuesFromDB,
   CreateIssueIntoDB,
   GetIssueByIdFromDB,
+  UpdateIssueInDB,
 };

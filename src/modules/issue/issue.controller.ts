@@ -61,8 +61,64 @@ const getIssueById = async (
   }
 };
 
+const updateIssue = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const issueId = req.params.id;
+    const updateData = req.body;
+    const user = req.user;
+
+    const existingIssue = await IssueService.GetIssueByIdFromDB(
+      issueId as string,
+    );
+
+    if (!existingIssue) {
+      return sendResponse(res, {
+        status: 404,
+        success: false,
+        message: "Issue not found",
+      });
+    }
+
+    if (
+      existingIssue.reporter_id !== user?.id &&
+      user?.role !== "contributor"
+    ) {
+      sendResponse(res, {
+        status: 403,
+        success: false,
+        message: "You are not authorized to update this issue",
+      });
+      return;
+    }
+
+    if (existingIssue.status !== "open") {
+      sendResponse(res, {
+        status: 400,
+        success: false,
+        message: "Issue is not open for updates",
+      });
+      return;
+    }
+
+    const result = await IssueService.UpdateIssueInDB(
+      issueId as string,
+      updateData,
+    );
+
+    sendResponse(res, {
+      status: 200,
+      success: true,
+      message: "Issue updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const IssueController = {
   getIssueById,
   createIssue,
   getAllIssues,
+  updateIssue,
 };

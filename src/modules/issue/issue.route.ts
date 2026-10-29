@@ -11,4 +11,9 @@ router.post(
 );
 router.get("/", IssueController.getAllIssues);
 router.get("/:id", IssueController.getIssueById);
+router.patch(
+  "/:id",
+  auth("contributor", "maintainer"),
+  IssueController.updateIssue,
+);
 export const IssueRoutes = router;
