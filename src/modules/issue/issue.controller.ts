@@ -41,7 +41,28 @@ const getAllIssues = async (
   }
 };
 
+const getIssueById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const issueId = req.params.id;
+    const result = await IssueService.GetIssueByIdFromDB(issueId as string);
+
+    sendResponse(res, {
+      status: 200,
+      success: true,
+      message: "Issue fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const IssueController = {
+  getIssueById,
   createIssue,
   getAllIssues,
 };
