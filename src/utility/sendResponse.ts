@@ -1,6 +1,6 @@
 import type { Response } from "express";
 
-type resposData<T> = {
+type responseData<T> = {
   status: number;
   success: boolean;
   message: string;
@@ -8,12 +8,12 @@ type resposData<T> = {
   error?: any;
 };
 
-const sendResponse = <T>(res: Response, responseData: resposData<T>) => {
-  res.status(responseData.status).json({
-    success: responseData.success,
-    message: responseData.message,
-    data: responseData.data,
-    error: responseData.error,
+const sendResponse = <T>(res: Response, payload: responseData<T>) => {
+  res.status(payload.status).json({
+    success: payload.success,
+    message: payload.message,
+    data: payload.data,
+    error: payload.error,
   });
 };
 

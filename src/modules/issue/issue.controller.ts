@@ -33,7 +33,7 @@ const getAllIssues = async (
     sendResponse(res, {
       status: 200,
       success: true,
-      message: "All issues fetched successfully",
+      message: "Issues retrived successfully",
       data: result,
     });
   } catch (error) {
@@ -53,7 +53,7 @@ const getIssueById = async (
     sendResponse(res, {
       status: 200,
       success: true,
-      message: "Issue fetched successfully",
+      message: "Issue retrived successfully",
       data: result,
     });
   } catch (error) {
@@ -79,25 +79,27 @@ const updateIssue = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    if (
-      existingIssue.reporter_id !== user?.id &&
-      user?.role !== "contributor"
-    ) {
-      sendResponse(res, {
-        status: 403,
-        success: false,
-        message: "You are not authorized to update this issue",
-      });
-      return;
-    }
+    const isMaintainer = user?.role === "maintainer";
+    const isOwner = Number(existingIssue.reporter_id) === Number(user?.id);
 
-    if (existingIssue.status !== "open") {
-      sendResponse(res, {
-        status: 400,
-        success: false,
-        message: "Issue is not open for updates",
-      });
-      return;
+    if (!isMaintainer) {
+      if (!isOwner) {
+        sendResponse(res, {
+          status: 403,
+          success: false,
+          message: "You are not authorized to update this issue",
+        });
+        return;
+      }
+
+      if (existingIssue.status !== "open") {
+        sendResponse(res, {
+          status: 400,
+          success: false,
+          message: "Issue is not open for updates",
+        });
+        return;
+      }
     }
 
     const result = await IssueService.UpdateIssueInDB(
@@ -139,7 +141,7 @@ const deleteIssue = async (req: Request, res: Response, next: NextFunction) => {
     sendResponse(res, {
       status: 200,
       success: true,
-      message: "Issue Deleted successfully",
+      message: "Issue deleted successfully",
       data: result,
     });
   } catch (error) {

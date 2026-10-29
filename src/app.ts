@@ -18,10 +18,12 @@ const port = config.port
 app.use(express.json());
 app.use(express.text());
 app.use(cookieParser());
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: config.corsOrigin.split(",").map((o) => o.trim()),
+    credentials: true,
+  }),
+);
   
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
